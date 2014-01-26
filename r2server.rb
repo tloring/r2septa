@@ -48,9 +48,10 @@ __END__
     %title R2
     <meta http-equiv="refresh" content="60">
   %body
-    = yield
     %p
       %tt= Time.now
+
+    = yield
 
 @@ index
 
