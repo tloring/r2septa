@@ -11,13 +11,25 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/' do
+    claymont = Station.new
+    claymont.name = "Claymont"
+    claymont.minutes_to = 20
+    claymont.minutes_from = 15
+
+    thirtieth = Station.new
+    thirtieth.name = "30th Street Station"
+    thirtieth.minutes_to = 15
+    thirtieth.minutes_from = 10
+
+    r2 = SeptaR2.new claymont, thirtieth
+
     @output = "\n    "
-    r2 = SeptaR2.new :claymont, :thirtieth
     @output += r2.next
     @output += r2.schedule
     r2.flip!
     @output += r2.next
     @output += r2.schedule
+
     haml :index
   end
 
