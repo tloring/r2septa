@@ -36,7 +36,10 @@ class SeptaR2Server < Sinatra::Base
     @output += r2.schedule                
 
     @output += "Stations\n\n"                                                                                
-    @output += r2.station_list.reverse.map{|s| "+ #{s}"}.to_s
+    r2.station_list.reverse.map{|s| "+ #{s}"}.each do |station|
+      @output += station
+    end
+
     haml :index
   end
 
