@@ -45,13 +45,13 @@ class SeptaR2
   
     output = ""
     response.each do |line|
-      output += "#{line['orig_departure_time']}"
+      output += "#{"%7s" % time_offset(line['orig_departure_time'], -@origin.time_before)}"
+      output += " "
+      output += "[#{line['orig_departure_time']} #{"%4s" % line['orig_train']}]"
       output += " ~> "
       output += "#{line['orig_arrival_time']}"
       output += " "
       output += "#{line['orig_delay']}"
-      output += " "
-      output += "#{"%4s" % line['orig_train']}"
       output += "\n"
     end
     output += "\n"
