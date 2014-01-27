@@ -21,13 +21,13 @@ class SeptaR2Server < Sinatra::Base
     thirtieth.time_before = 15                                                                                 
     thirtieth.time_after = 10                                                                                  
                                                                                                                
-    @output = ""
     r2 = SeptaR2.new claymont, thirtieth                                                                       
-    @output += "#{claymont.name} >> #{thirtieth.name}\n\n"                                                           
+    @output  = "#{claymont.name} >> #{thirtieth.name}\n\n"                                                           
     @output += "Next to Arrive\n\n"                                                                                  
     @output += r2.next                                                                                               
     @output += "Weekday Schedule\n\n"                                                                                
     @output += r2.schedule                                                                                           
+
     r2.flip!                                                                                                   
     @output += "#{thirtieth.name} >> #{claymont.name}\n\n"                                                           
     @output += "Next to Arrive\n\n"                                                                                  
@@ -41,6 +41,56 @@ class SeptaR2Server < Sinatra::Base
     end
 
     haml :index
+  end
+
+  get '/claymont' do
+    claymont = Station.new                                                                                     
+    claymont.name = "Claymont"                                                                                 
+    claymont.time_before = 20                                                                                  
+    claymont.time_after = 15                                                                                   
+                                                                                                               
+    thirtieth = Station.new                                                                                    
+    thirtieth.name = "30th Street Station"                                                                     
+    thirtieth.time_before = 15                                                                                 
+    thirtieth.time_after = 10                                                                                  
+                                                                                                               
+    r2 = SeptaR2.new claymont, thirtieth                                                                       
+    @output  = "#{claymont.name} >> #{thirtieth.name}\n\n"                                                           
+    @output += "Next to Arrive\n\n"                                                                                  
+    @output += r2.next                                                                                               
+    @output += "Weekday Schedule\n\n"                                                                                
+    @output += r2.schedule                                                                                           
+
+    haml :index
+  end
+
+  get '/30th' do
+    claymont = Station.new                                                                                     
+    claymont.name = "Claymont"                                                                                 
+    claymont.time_before = 20                                                                                  
+    claymont.time_after = 15                                                                                   
+                                                                                                               
+    thirtieth = Station.new                                                                                    
+    thirtieth.name = "30th Street Station"                                                                     
+    thirtieth.time_before = 15                                                                                 
+    thirtieth.time_after = 10                                                                                  
+                                                                                                               
+    r2 = SeptaR2.new thirtieth, claymont
+    @output  = "#{thirtieth.name} >> #{claymont.name}\n\n"                                                           
+    @output += "Next to Arrive\n\n"                                                                                  
+    @output += r2.next                                                                                               
+    @output += "Weekday Schedule\n\n"                                                                                
+    @output += r2.schedule                
+
+    haml :index
+  end
+
+  get '/stations' do
+    @output = "Stations\n\n"                                                                                
+    r2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
+      @output += station
+    end
+
   end
 
 end

@@ -22,7 +22,7 @@ class SeptaR2
 
   def get_stations                                                                                             
     # northbound order
-    url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_1.html"                                                   
+    url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_1.html"
     doc = Nokogiri::HTML(open(url))                                                                            
                                                                                                                
     station_array = []                                                                                         
