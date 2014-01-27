@@ -12,23 +12,37 @@ class SeptaR2
 
   ROUTE_CODE = "WIL"
 
-  # northbound order
-  STATIONS = [ "Newark", "Churchmans Crossing", "Wilmington", "Claymont", "Marcus Hook", "Highland Avenue", 
-               "Chester", "Eddystone", "Crum Lynne", "Ridley Park", "Prospect Park", "Norwood", 
-               "Glenolden", "Folcroft", "Sharon Hill", "Curtis Park", "Darby", "University City", 
-               "30th Street Station", "Suburban Station", "Market East Station", "Temple University"]
+  attr_reader :station_list
 
   def initialize(origin, destination)
+    @station_list = get_stations
     @origin = origin
     @destination = destination
   end
 
+  def get_stations                                                                                             
+    # northbound order
+    url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_1.html"                                                   
+    doc = Nokogiri::HTML(open(url))                                                                            
+                                                                                                               
+    station_array = []                                                                                         
+    # there are 2 tables with ID of timeTable, so re-parse 1st table and work on it for stations               
+    Nokogiri::HTML(doc.search("#timeTable")[0].to_s).search("tr a").each_with_index do |element, index|        
+      next if element.content.empty?                                                                           
+      station_array << element.content                                                                         
+    end                                                                                                        
+                                                                                                               
+    station_array                                                                                              
+  end       
+
   def direction
-    STATIONS.index(@origin.name) < STATIONS.index(@destination.name) ? :northbound : :southbound
+    #STATIONS.index(@origin.name) < STATIONS.index(@destination.name) ? :northbound : :southbound
+    @station_list.index(@origin.name) < @station_list.index(@destination.name) ? :northbound : :southbound
   end
 
   def stations(direction_sym)
-    direction_sym == :northbound ? STATIONS : STATIONS.reverse
+    #direction_sym == :northbound ? STATIONS : STATIONS.reverse
+    direction_sym == :northbound ? @station_list : @station_list.reverse
   end
 
   def flip!
@@ -116,4 +130,5 @@ if $0 == __FILE__
   puts "Weekday Schedule\n\n"
   puts r2.schedule
 
+  puts r2.station_list.reverse.map{|s| "+ #{s}"}
 end
