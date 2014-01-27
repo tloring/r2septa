@@ -102,7 +102,7 @@ __END__
 
 %html
   %head
-    %title R2
+    %title R2 : #{@orig.name}
     <meta http-equiv="refresh" content="60">
   %body
     %p
