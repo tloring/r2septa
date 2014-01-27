@@ -20,6 +20,21 @@ class SeptaR2
     @destination = destination
   end
 
+  def self.station_list
+    # northbound order
+    url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_1.html"
+    doc = Nokogiri::HTML(open(url))                                                                            
+                                                                                                               
+    station_array = []                                                                                         
+    # there are 2 tables with ID of timeTable, so re-parse 1st table and work on it for stations               
+    Nokogiri::HTML(doc.search("#timeTable")[0].to_s).search("tr a").each_with_index do |element, index|        
+      next if element.content.empty?                                                                           
+      station_array << element.content                                                                         
+    end                                                                                                        
+                                                                                                               
+    station_array
+  end
+
   def get_stations                                                                                             
     # northbound order
     url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_1.html"

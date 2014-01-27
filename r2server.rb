@@ -87,7 +87,7 @@ class SeptaR2Server < Sinatra::Base
 
   get '/stations' do
     @output = "Stations\n\n"                                                                                
-    r2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
+    SeptaR2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
       @output += station
     end
 
