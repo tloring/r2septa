@@ -60,9 +60,13 @@ class SeptaR2
     response.each do |line|
       output += "%7s" % time_offset(line['orig_departure_time'], -@origin.time_before)
       output += " "
-      output += "[#{line['orig_departure_time']} #{"%4s" % line['orig_train']}]"
+      output += "["
+      output += line['orig_departure_time']
+      output += " "
+      output += "%4s" % line['orig_train']
       output += " ~> "
       output += line['orig_arrival_time']
+      output += "]"
       output += " "
       output += line['orig_delay']
       output += "\n"
@@ -93,9 +97,13 @@ class SeptaR2
       next if origin_times[index] !~ /:/ or destination_times[index] !~ /:/  
       output += "%7s" % time_offset(origin_times[index], -@origin.time_before)
       output += " "
-      output += "[#{"%7s" % origin_times[index]} #{"%4s" % train_number}]"
+      output += "["
+      output += "%7s" % origin_times[index]
+      output += " "
+      output += "%4s" % train_number
       output += " ~> "
       output += "%7s" % destination_times[index]
+      output += "]"
       output += " "
       output += "%7s" % time_offset(destination_times[index], +@destination.time_after)
       output += "\n"
