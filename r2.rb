@@ -56,24 +56,31 @@ class SeptaR2
     response = JSON.parse open(URI::encode(url)).read
   
     output = ""
-    response.each do |line|
-      output += "%7s" % time_offset(line['orig_departure_time'], -@origin.time_before)
+    response.each do |train|
+      output += "%7s" % time_offset(train['orig_departure_time'], -@origin.time_before)
       output += " "
       output += "["
-      output += line['orig_departure_time']
+      output += train['orig_departure_time']
       output += " "
-      output += "(%4s)" % line['orig_train']
+      output += "(%4s)" % train['orig_train']
       output += " "
-      output += line['orig_arrival_time']
+      output += train['orig_arrival_time']
       output += "]"
       output += " "
-      output += line['orig_delay']
+      output += train['orig_delay']
       output += "\n"
     end
     output += "\n"
   end
  
   def schedule
+    url = "http://www3.septa.org/hackathon/NextToArrive/#{@origin.name}/#{@destination.name}/20"
+    response = JSON.parse open(URI::encode(url)).read
+    next_arrival = Hash.new("")
+    response.each do |train_rec|
+      next_arrival[train_rec['orig_train']] = train_rec['orig_delay']
+    end
+
     direction_code = direction == :northbound ? 1 : 0
     origin_index = stations(direction).index(@origin.name) + 1
     destination_index = stations(direction).index(@destination.name) + 1
@@ -105,6 +112,8 @@ class SeptaR2
       output += "]"
       output += " "
       output += "%7s" % time_offset(destination_times[index], +@destination.time_after)
+      output += " "
+      output += next_arrival[train_number]
       output += "\n"
     end 
     output += "\n"
@@ -125,15 +134,15 @@ if $0 == __FILE__
 
   r2 = SeptaR2.new claymont, thirtieth
   puts "#{claymont.name} >> #{thirtieth.name}\n\n"
-  puts "Next to Arrive\n\n"
-  puts r2.next
-  puts "Weekday Schedule\n\n"
+  #puts "Next to Arrive\n\n"
+  #puts r2.next
+  #puts "Weekday Schedule\n\n"
   puts r2.schedule
   r2.flip!
   puts "#{thirtieth.name} >> #{claymont.name}\n\n"
-  puts "Next to Arrive\n\n"
-  puts r2.next
-  puts "Weekday Schedule\n\n"
+  #puts "Next to Arrive\n\n"
+  #puts r2.next
+  #puts "Weekday Schedule\n\n"
   puts r2.schedule
 
   puts r2.station_list.reverse.map{|s| "+ #{s}"}

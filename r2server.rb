@@ -26,16 +26,16 @@ class SeptaR2Server < Sinatra::Base
     r2 = SeptaR2.new @orig, @dest
 
     @output  = "#{@orig.name} >> #{@dest.name}\n\n"
-    @output += "Next to Arrive\n\n"
-    @output += r2.next
-    @output += "Weekday Schedule\n\n"
+    #@output += "Next to Arrive\n\n"
+    #@output += r2.next
+    #@output += "Weekday Schedule\n\n"
     @output += r2.schedule
 
     r2.flip!
     @output += "#{@orig.name} >> #{@dest.name}\n\n"
-    @output += "Next to Arrive\n\n"
-    @output += r2.next
-    @output += "Weekday Schedule\n\n"
+    #@output += "Next to Arrive\n\n"
+    #@output += r2.next
+    #@output += "Weekday Schedule\n\n"
     @output += r2.schedule
 
     @output += "Stations\n\n"
@@ -61,9 +61,9 @@ class SeptaR2Server < Sinatra::Base
 
     @title   = "R2 : #{@orig.name}"
     @output  = "R2 : #{@orig.name} >> #{@dest.name}\n\n"
-    @output += "Next to Arrive\n\n"
-    @output += r2.next
-    @output += "Weekday Schedule\n\n"
+    #@output += "Next to Arrive\n\n"
+    #@output += r2.next
+    #@output += "Weekday Schedule\n\n"
     @output += r2.schedule
 
     haml :index
@@ -84,9 +84,9 @@ class SeptaR2Server < Sinatra::Base
 
     @title   = "R2 : #{@orig.name}"
     @output  = "R2 : #{@orig.name} >> #{@dest.name}\n\n"
-    @output += "Next to Arrive\n\n"
-    @output += r2.next
-    @output += "Weekday Schedule\n\n"
+    #@output += "Next to Arrive\n\n"
+    #@output += r2.next
+    #@output += "Weekday Schedule\n\n"
     @output += r2.schedule
 
     haml :index
