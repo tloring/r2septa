@@ -59,8 +59,8 @@ class SeptaR2Server < Sinatra::Base
 
     r2 = SeptaR2.new @orig, @dest
 
-    @title   = "R2 : #{@orig.name}"
-    @output  = "R2 : #{@orig.name} >> #{@dest.name}\n\n"
+    @title   = "#{@orig.name}"
+    @output  = "#{@orig.name} >> #{@dest.name}\n\n"
     #@output += "Next to Arrive\n\n"
     #@output += r2.next
     #@output += "Weekday Schedule\n\n"
@@ -82,8 +82,8 @@ class SeptaR2Server < Sinatra::Base
 
     r2 = SeptaR2.new @orig, @dest
 
-    @title   = "R2 : #{@orig.name}"
-    @output  = "R2 : #{@orig.name} >> #{@dest.name}\n\n"
+    @title   = "#{@orig.name}"
+    @output  = "#{@orig.name} >> #{@dest.name}\n\n"
     #@output += "Next to Arrive\n\n"
     #@output += r2.next
     #@output += "Weekday Schedule\n\n"
@@ -93,7 +93,7 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/stations' do
-    @title = "R2 : Stations"
+    @title = "Stations"
     @output = "#{@title}\n\n"
     SeptaR2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
       @output += station
