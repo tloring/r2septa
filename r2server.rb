@@ -21,6 +21,7 @@ class SeptaR2Server < Sinatra::Base
     thirtieth.time_before = 15                                                                                 
     thirtieth.time_after = 10                                                                                  
                                                                                                                
+    @output = ""
     r2 = SeptaR2.new claymont, thirtieth                                                                       
     @output += "#{claymont.name} >> #{thirtieth.name}\n\n"                                                           
     @output += "Next to Arrive\n\n"                                                                                  
