@@ -106,7 +106,13 @@ __END__
     <meta http-equiv="refresh" content="60">
   %body
     %p
-      %tt= Time.now.strftime("%l:%M:%S")
+      %tt
+        = Time.now.strftime("%l:%M:%S")
+        %a{href: "/claymont"}Claymont
+        |
+        %a{href: "/30th"}30th Street Station
+        |
+        %a{href: "/30th"}Stations
 
     = yield
 
