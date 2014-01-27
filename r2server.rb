@@ -112,7 +112,7 @@ __END__
         |
         %a{href: "/30th"}30th Street Station
         |
-        %a{href: "/30th"}Stations
+        %a{href: "/stations"}Stations
 
     = yield
 
