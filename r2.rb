@@ -36,12 +36,10 @@ class SeptaR2
   end       
 
   def direction
-    #STATIONS.index(@origin.name) < STATIONS.index(@destination.name) ? :northbound : :southbound
     @station_list.index(@origin.name) < @station_list.index(@destination.name) ? :northbound : :southbound
   end
 
   def stations(direction_sym)
-    #direction_sym == :northbound ? STATIONS : STATIONS.reverse
     direction_sym == :northbound ? @station_list : @station_list.reverse
   end
 
@@ -59,13 +57,13 @@ class SeptaR2
   
     output = ""
     response.each do |line|
-      output += "#{"%7s" % time_offset(line['orig_departure_time'], -@origin.time_before)}"
+      output += "%7s" % time_offset(line['orig_departure_time'], -@origin.time_before)
       output += " "
       output += "[#{line['orig_departure_time']} #{"%4s" % line['orig_train']}]"
       output += " ~> "
-      output += "#{line['orig_arrival_time']}"
+      output += line['orig_arrival_time']
       output += " "
-      output += "#{line['orig_delay']}"
+      output += line['orig_delay']
       output += "\n"
     end
     output += "\n"
@@ -92,13 +90,13 @@ class SeptaR2
     train_numbers.each_with_index do |train_number, index|
       # skip if no stop time at either origin or destination
       next if origin_times[index] !~ /:/ or destination_times[index] !~ /:/  
-      output += "#{"%7s" % time_offset(origin_times[index], -@origin.time_before)}"
+      output += "%7s" % time_offset(origin_times[index], -@origin.time_before)
       output += " "
       output += "[#{"%7s" % origin_times[index]} #{"%4s" % train_number}]"
       output += " ~> "
-      output += "#{"%7s" % destination_times[index]}"
+      output += "%7s" % destination_times[index]
       output += " "
-      output += "#{"%7s" % time_offset(destination_times[index], +@destination.time_after)}"
+      output += "%7s" % time_offset(destination_times[index], +@destination.time_after)
       output += "\n"
     end 
     output += "\n"
