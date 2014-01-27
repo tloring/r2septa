@@ -5,7 +5,7 @@ require 'open-uri'
 require 'nokogiri'
 require 'json'
 
-Station = Struct.new(:code, :name, :minutes_to, :minutes_from, :northbound_station_index, :southbound_station_index)
+Station = Struct.new(:code, :name, :minutes_to, :minutes_from)
 
 class SeptaR2
 
@@ -13,9 +13,9 @@ class SeptaR2
 
   # northbound order
   STATIONS = [ "Newark", "Churchmans Crossing", "Wilmington", "Claymont", "Marcus Hook", "Highland Avenue", 
-               "Chester", "Eddystone", "Crum Lynne", "Ridley Park", "Prospect Park", "Norwood", "Glenolden", 
-               "Folcroft", "Sharon Hill", "Curtis Park", "Darby", "University City", "30th Street Station", 
-               "Suburban Station", "Market East Station", "Temple University"]
+               "Chester", "Eddystone", "Crum Lynne", "Ridley Park", "Prospect Park", "Norwood", 
+               "Glenolden", "Folcroft", "Sharon Hill", "Curtis Park", "Darby", "University City", 
+               "30th Street Station", "Suburban Station", "Market East Station", "Temple University"]
 
   def initialize(origin, destination)
     @origin = origin
@@ -41,7 +41,8 @@ class SeptaR2
     response = JSON.parse open(URI::encode(url)).read
   
     response.each do |line|
-      output += "#{line['orig_departure_time']} ~> #{line['orig_arrival_time']} #{line['orig_delay']} #{"%4s" % line['orig_train']}\n"
+      output += "#{line['orig_departure_time']} ~> #{line['orig_arrival_time']} "
+      output += "#{line['orig_delay']} #{"%4s" % line['orig_train']}\n"
     end
     output += "\n"
   end
@@ -68,7 +69,8 @@ class SeptaR2
     train_numbers.each_with_index do |train_number, index|
       # skip if no stop time at either origin or destination
       next if origin_times[index] !~ /:/ or destination_times[index] !~ /:/  
-      output += "#{"%7s" % origin_times[index]} ~> #{"%7s" % destination_times[index]} #{"%4s" % train_number}\n"
+      output += "#{"%7s" % origin_times[index]} ~> #{"%7s" % destination_times[index]} "
+      output += "#{"%4s" % train_number}\n"
     end 
     output += "\n"
   end
