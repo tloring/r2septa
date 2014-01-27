@@ -4,8 +4,9 @@ require 'net/http'
 require 'open-uri'
 require 'nokogiri'
 require 'json'
+require 'time'
 
-Station = Struct.new(:code, :name, :minutes_to, :minutes_from)
+Station = Struct.new(:code, :name, :time_before, :time_after)
 
 class SeptaR2
 
@@ -34,22 +35,29 @@ class SeptaR2
     @origin, @destination = @destination, @origin
   end
 
-  def next
-    output = "Next to Arrive #{@origin.name} >> #{@destination.name}\n\n"
+  def time_offset(time_str, minutes)
+    (Time.parse(time_str)+(minutes*60)).strftime("%l:%M%P")
+  end
 
+  def next
     url = "http://www3.septa.org/hackathon/NextToArrive/#{@origin.name}/#{@destination.name}/20"
     response = JSON.parse open(URI::encode(url)).read
   
+    output = ""
     response.each do |line|
-      output += "#{line['orig_departure_time']} ~> #{line['orig_arrival_time']} "
-      output += "#{line['orig_delay']} #{"%4s" % line['orig_train']}\n"
+      output += "#{line['orig_departure_time']}"
+      output += " ~> "
+      output += "#{line['orig_arrival_time']}"
+      output += " "
+      output += "#{line['orig_delay']}"
+      output += " "
+      output += "#{"%4s" % line['orig_train']}"
+      output += "\n"
     end
     output += "\n"
   end
-
+ 
   def schedule
-    output = "Weekday Schedule #{@origin.name} >> #{@destination.name}\n\n"
-
     direction_code = direction == :northbound ? 1 : 0
     origin_index = stations(direction).index(@origin.name) + 1
     destination_index = stations(direction).index(@destination.name) + 1
@@ -66,11 +74,18 @@ class SeptaR2
     end 
     
     # traverse each column, ie train number
+    output = ""
     train_numbers.each_with_index do |train_number, index|
       # skip if no stop time at either origin or destination
       next if origin_times[index] !~ /:/ or destination_times[index] !~ /:/  
-      output += "#{"%7s" % origin_times[index]} ~> #{"%7s" % destination_times[index]} "
-      output += "#{"%4s" % train_number}\n"
+      output += "#{"%7s" % time_offset(origin_times[index], -@origin.time_before)}"
+      output += " "
+      output += "[#{"%7s" % origin_times[index]} #{"%4s" % train_number}]"
+      output += " ~> "
+      output += "#{"%7s" % destination_times[index]}"
+      output += " "
+      output += "#{"%7s" % time_offset(destination_times[index], +@destination.time_after)}"
+      output += "\n"
     end 
     output += "\n"
   end
@@ -80,19 +95,25 @@ if $0 == __FILE__
 
   claymont = Station.new
   claymont.name = "Claymont"
-  claymont.minutes_to = 20
-  claymont.minutes_from = 15
+  claymont.time_before = 20
+  claymont.time_after = 15
 
   thirtieth = Station.new
   thirtieth.name = "30th Street Station"
-  thirtieth.minutes_to = 15
-  thirtieth.minutes_from = 10
+  thirtieth.time_before = 15
+  thirtieth.time_after = 10
 
   r2 = SeptaR2.new claymont, thirtieth
+  puts "#{claymont.name} >> #{thirtieth.name}\n\n"
+  puts "Next to Arrive\n\n"
   puts r2.next
+  puts "Weekday Schedule\n\n"
   puts r2.schedule
   r2.flip!
+  puts "#{thirtieth.name} >> #{claymont.name}\n\n"
+  puts "Next to Arrive\n\n"
   puts r2.next
+  puts "Weekday Schedule\n\n"
   puts r2.schedule
 
 end
