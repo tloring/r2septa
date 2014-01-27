@@ -15,7 +15,6 @@ class SeptaR2
   attr_reader :station_list
 
   def initialize(origin, destination)
-    #@station_list = get_stations
     @station_list = SeptaR2.station_list
     @origin = origin
     @destination = destination
