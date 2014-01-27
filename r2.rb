@@ -62,8 +62,8 @@ class SeptaR2
       output += "["
       output += line['orig_departure_time']
       output += " "
-      output += "%4s" % line['orig_train']
-      output += " ~> "
+      output += "(%4s)" % line['orig_train']
+      output += " "
       output += line['orig_arrival_time']
       output += "]"
       output += " "
@@ -99,8 +99,8 @@ class SeptaR2
       output += "["
       output += "%7s" % origin_times[index]
       output += " "
-      output += "%4s" % train_number
-      output += " ~> "
+      output += "(%4s)" % train_number
+      output += " "
       output += "%7s" % destination_times[index]
       output += "]"
       output += " "
