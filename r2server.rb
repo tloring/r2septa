@@ -44,18 +44,18 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/claymont' do
-    claymont = Station.new
-    claymont.name = "Claymont"
-    claymont.time_before = 20
-    claymont.time_after = 15
+    orig = Station.new
+    orig.name = "Claymont"
+    orig.time_before = 20
+    orig.time_after = 15
 
-    thirtieth = Station.new
-    thirtieth.name = "30th Street Station"
-    thirtieth.time_before = 15
-    thirtieth.time_after = 10
+    dest = Station.new
+    dest.name = "30th Street Station"
+    dest.time_before = 15
+    dest.time_after = 10
 
-    r2 = SeptaR2.new claymont, thirtieth
-    @output  = "#{claymont.name} >> #{thirtieth.name}\n\n"
+    r2 = SeptaR2.new orig, dest
+    @output  = "#{orig.name} >> #{dest.name}\n\n"
     @output += "Next to Arrive\n\n"
     @output += r2.next
     @output += "Weekday Schedule\n\n"
@@ -65,18 +65,18 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/30th' do
-    claymont = Station.new
-    claymont.name = "Claymont"
-    claymont.time_before = 20
-    claymont.time_after = 15
+    orig = Station.new
+    orig.name = "Claymont"
+    orig.time_before = 20
+    orig.time_after = 15
 
-    thirtieth = Station.new
-    thirtieth.name = "30th Street Station"
-    thirtieth.time_before = 15
-    thirtieth.time_after = 10
+    dest = Station.new
+    dest.name = "30th Street Station"
+    dest.time_before = 15
+    dest.time_after = 10
 
-    r2 = SeptaR2.new thirtieth, claymont
-    @output  = "#{thirtieth.name} >> #{claymont.name}\n\n"
+    r2 = SeptaR2.new orig, dest
+    @output  = "#{orig.name} >> #{dest.name}\n\n"
     @output += "Next to Arrive\n\n"
     @output += r2.next
     @output += "Weekday Schedule\n\n"
