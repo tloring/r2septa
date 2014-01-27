@@ -11,24 +11,28 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/' do
-    claymont = Station.new
-    claymont.name = "Claymont"
-    claymont.minutes_to = 20
-    claymont.minutes_from = 15
-
-    thirtieth = Station.new
-    thirtieth.name = "30th Street Station"
-    thirtieth.minutes_to = 15
-    thirtieth.minutes_from = 10
-
-    r2 = SeptaR2.new claymont, thirtieth
-
-    @output = "\n    "
-    @output += r2.next
-    @output += r2.schedule
-    r2.flip!
-    @output += r2.next
-    @output += r2.schedule
+    claymont = Station.new                                                                                     
+    claymont.name = "Claymont"                                                                                 
+    claymont.time_before = 20                                                                                  
+    claymont.time_after = 15                                                                                   
+                                                                                                               
+    thirtieth = Station.new                                                                                    
+    thirtieth.name = "30th Street Station"                                                                     
+    thirtieth.time_before = 15                                                                                 
+    thirtieth.time_after = 10                                                                                  
+                                                                                                               
+    r2 = SeptaR2.new claymont, thirtieth                                                                       
+    @output += "#{claymont.name} >> #{thirtieth.name}\n\n"                                                           
+    @output += "Next to Arrive\n\n"                                                                                  
+    @output += r2.next                                                                                               
+    @output += "Weekday Schedule\n\n"                                                                                
+    @output += r2.schedule                                                                                           
+    r2.flip!                                                                                                   
+    @output += "#{thirtieth.name} >> #{claymont.name}\n\n"                                                           
+    @output += "Next to Arrive\n\n"                                                                                  
+    @output += r2.next                                                                                               
+    @output += "Weekday Schedule\n\n"                                                                                
+    @output += r2.schedule                
 
     haml :index
   end
