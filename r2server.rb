@@ -21,7 +21,10 @@ class SeptaR2Server < Sinatra::Base
     @dest.time_before = 15
     @dest.time_after = 10
 
+    @title = "R2"
+
     r2 = SeptaR2.new @orig, @dest
+
     @output  = "#{@orig.name} >> #{@dest.name}\n\n"
     @output += "Next to Arrive\n\n"
     @output += r2.next
@@ -54,8 +57,10 @@ class SeptaR2Server < Sinatra::Base
     @dest.time_before = 15
     @dest.time_after = 10
 
-    r2 = SeptaR2.new orig, dest
-    @output  = "#{@orig.name} >> #{@dest.name}\n\n"
+    r2 = SeptaR2.new @orig, @dest
+
+    @title   = "R2 : #{@orig.name}"
+    @output  = "R2 : #{@orig.name} >> #{@dest.name}\n\n"
     @output += "Next to Arrive\n\n"
     @output += r2.next
     @output += "Weekday Schedule\n\n"
@@ -65,18 +70,20 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/30th' do
-    orig = Station.new
-    orig.name = "Claymont"
-    orig.time_before = 20
-    orig.time_after = 15
+    @orig = Station.new
+    @orig.name = "30th Street Station"
+    @orig.time_before = 15
+    @orig.time_after = 10
 
-    dest = Station.new
-    dest.name = "30th Street Station"
-    dest.time_before = 15
-    dest.time_after = 10
+    @dest = Station.new
+    @dest.name = "Claymont"
+    @dest.time_before = 20
+    @dest.time_after = 15
 
-    r2 = SeptaR2.new orig, dest
-    @output  = "#{orig.name} >> #{dest.name}\n\n"
+    r2 = SeptaR2.new @orig, @dest
+
+    @title   = "R2 : #{@orig.name}"
+    @output  = "R2 : #{@orig.name} >> #{@dest.name}\n\n"
     @output += "Next to Arrive\n\n"
     @output += r2.next
     @output += "Weekday Schedule\n\n"
@@ -86,7 +93,8 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/stations' do
-    @output = "Stations\n\n"
+    @title = "R2 : Stations"
+    @output = "#{@title}\n\n"
     SeptaR2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
       @output += station
     end
@@ -102,7 +110,7 @@ __END__
 
 %html
   %head
-    %title R2 : #{@orig.name}
+    %title #{@title}
     <meta http-equiv="refresh" content="60">
   %body
     %p

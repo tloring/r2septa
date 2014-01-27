@@ -10,6 +10,8 @@ GEM
     rack-protection (1.5.2)
       rack
     rake (10.1.1)
+    shotgun (0.9)
+      rack (>= 1.0)
     sinatra (1.4.4)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -23,4 +25,5 @@ DEPENDENCIES
   haml
   nokogiri
   rake
+  shotgun
   sinatra
