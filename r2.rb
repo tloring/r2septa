@@ -15,7 +15,8 @@ class SeptaR2
   attr_reader :station_list
 
   def initialize(origin, destination)
-    @station_list = get_stations
+    #@station_list = get_stations
+    @station_list = SeptaR2.station_list
     @origin = origin
     @destination = destination
   end
@@ -34,21 +35,6 @@ class SeptaR2
                                                                                                                
     station_array
   end
-
-  def get_stations                                                                                             
-    # northbound order
-    url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_1.html"
-    doc = Nokogiri::HTML(open(url))                                                                            
-                                                                                                               
-    station_array = []                                                                                         
-    # there are 2 tables with ID of timeTable, so re-parse 1st table and work on it for stations               
-    Nokogiri::HTML(doc.search("#timeTable")[0].to_s).search("tr a").each_with_index do |element, index|        
-      next if element.content.empty?                                                                           
-      station_array << element.content                                                                         
-    end                                                                                                        
-                                                                                                               
-    station_array                                                                                              
-  end       
 
   def direction
     @station_list.index(@origin.name) < @station_list.index(@destination.name) ? :northbound : :southbound
