@@ -54,7 +54,7 @@ __END__
     <meta http-equiv="refresh" content="60">
   %body
     %p
-      %tt= Time.now
+      %tt= Time.now.strftime("%H:%M")
 
     = yield
 
