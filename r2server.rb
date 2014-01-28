@@ -2,6 +2,8 @@
 
 require 'sinatra/base'
 require 'haml'
+require 'json'
+require 'awesome_print'
 require './r2'
 
 class SeptaR2Server < Sinatra::Base
@@ -11,47 +13,22 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/' do
-    @orig = Station.new
-    @orig.name = "Claymont"
-    @orig.time_before = 20
-    @orig.time_after = 15
-
-    @dest = Station.new
-    @dest.name = "30th Street Station"
-    @dest.time_before = 15
-    @dest.time_after = 10
-
-    @title = "R2"
-
-    r2 = SeptaR2.new @orig, @dest
-
-    @output  = "#{@orig.name} >> #{@dest.name}\n\n"
-    @output += r2.schedule_text
-
-    r2.flip!
-    @output += "#{@orig.name} >> #{@dest.name}\n\n"
-    @output += r2.schedule_text
-
-    @output += "Stations\n\n"
-    SeptaR2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
-      @output += station
-    end
-
-    haml :index
+    redirect "/claymont"
   end
 
-  get '/claymont' do
+  get '/route/:orig_name/:orig_tminus/:orig_tplus/:dest_name/:dest_tminus/:dest_tplus/:format' do
     @orig = Station.new
-    @orig.name = "Claymont"
-    @orig.time_before = 20
-    @orig.time_after = 15
+    @orig.name = URI::decode(params[:orig_name])
+    @orig.time_before = params[:orig_tminus].to_i
+    @orig.time_after = params[:orig_tplus].to_i
 
     @dest = Station.new
-    @dest.name = "30th Street Station"
-    @dest.time_before = 15
-    @dest.time_after = 10
+    @dest.name = URI::decode(params[:dest_name])
+    @dest.time_before = params[:dest_tminus].to_i
+    @dest.time_after = params[:dest_tplus].to_i
 
     r2 = SeptaR2.new @orig, @dest
+    return JSON.pretty_generate(r2.schedule_data) if params[:format] == 'json'
 
     @title   = "#{@orig.name}"
     @output  = "#{@orig.name} >> #{@dest.name}\n\n"
@@ -60,7 +37,28 @@ class SeptaR2Server < Sinatra::Base
     haml :index
   end
 
-  get '/30th' do
+  get '/claymont*' do |ext|
+    @orig = Station.new
+    @orig.name = "Claymont"
+    @orig.time_before = 20
+    @orig.time_after = 15
+
+    @dest = Station.new
+    @dest.name = "30th Street Station"
+    @dest.time_before = 15
+    @dest.time_after = 10
+
+    r2 = SeptaR2.new @orig, @dest
+    return JSON.pretty_generate(r2.schedule_data) if ext == ".json"
+
+    @title   = "#{@orig.name}"
+    @output  = "#{@orig.name} >> #{@dest.name}\n\n"
+    @output += r2.schedule_text
+
+    haml :index
+  end
+
+  get '/30th*' do |ext|
     @orig = Station.new
     @orig.name = "30th Street Station"
     @orig.time_before = 15
@@ -72,6 +70,7 @@ class SeptaR2Server < Sinatra::Base
     @dest.time_after = 15
 
     r2 = SeptaR2.new @orig, @dest
+    return JSON.pretty_generate(r2.schedule_data) if ext == ".json"
 
     @title   = "#{@orig.name}"
     @output  = "#{@orig.name} >> #{@dest.name}\n\n"
@@ -80,7 +79,9 @@ class SeptaR2Server < Sinatra::Base
     haml :index
   end
 
-  get '/stations' do
+  get '/stations*' do |ext|
+    return JSON.pretty_generate SeptaR2.station_list if ext == '.json' 
+
     @title = "Stations"
     @output = "#{@title}\n\n"
     SeptaR2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
