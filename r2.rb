@@ -5,6 +5,7 @@ require 'open-uri'
 require 'nokogiri'
 require 'json'
 require 'time'
+require 'awesome_print'
 
 Station = Struct.new(:code, :name, :time_before, :time_after)
 
@@ -48,32 +49,10 @@ class SeptaR2
   end
 
   def time_offset(time_str, minutes)
-    (Time.parse(time_str)+(minutes*60)).strftime("%l:%M%P")
+    (Time.parse(time_str)+(minutes*60)).strftime("%I:%M%P")
   end
 
-  def next
-    url = "http://www3.septa.org/hackathon/NextToArrive/#{@origin.name}/#{@destination.name}/20"
-    response = JSON.parse open(URI::encode(url)).read
-  
-    output = ""
-    response.each do |train|
-      output += "%7s" % time_offset(train['orig_departure_time'], -@origin.time_before)
-      output += " "
-      output += "["
-      output += train['orig_departure_time']
-      output += " "
-      output += "(%4s)" % train['orig_train']
-      output += " "
-      output += train['orig_arrival_time']
-      output += "]"
-      output += " "
-      output += train['orig_delay']
-      output += "\n"
-    end
-    output += "\n"
-  end
- 
-  def schedule
+  def schedule_data
     url = "http://www3.septa.org/hackathon/NextToArrive/#{@origin.name}/#{@destination.name}/20"
     response = JSON.parse open(URI::encode(url)).read
     next_arrival = Hash.new("")
@@ -95,29 +74,93 @@ class SeptaR2
       origin_times = element.content.split if index == origin_index           # row of times for origin
       destination_times = element.content.split if index == destination_index # row of times for destination
     end 
-    
+
     # traverse each column, ie train number
-    output = ""
+    array = []
     train_numbers.each_with_index do |train_number, index|
       # skip if no stop time at either origin or destination
       next if origin_times[index] !~ /:/ or destination_times[index] !~ /:/  
-      output += "%7s" % time_offset(origin_times[index], -@origin.time_before)
+      hash = {}
+      hash[:train_number] = train_number
+      hash[:time_before] = time_offset(origin_times[index], -@origin.time_before)
+      hash[:time_origin] = origin_times[index]
+      hash[:time_destination] = destination_times[index]
+      hash[:time_after] = time_offset(destination_times[index], +@destination.time_after)
+      hash[:next_arrival] = next_arrival[train_number]
+      array << hash
+    end 
+    
+    ap array
+    array
+
+    # # traverse each column, ie train number
+    # output = ""
+    # array.each_with_index do |hash, index|
+    #   # skip if no stop time at either origin or destination
+    #   output += "%7s" % hash[:time_before]
+    #   output += " "
+    #   output += "["
+    #   output += "%7s" % hash[:time_origin]
+    #   output += " "
+    #   output += "(%4s)" % hash[:train_number]
+    #   output += " "
+    #   output += "%7s" % hash[:time_destination]
+    #   output += "]"
+    #   output += " "
+    #   output += "%7s" % hash[:time_after]
+    #   output += " "
+    #   output += hash[:next_arrival]
+    #   output += "\n"
+    # end 
+    # output += "\n"
+
+    # # traverse each column, ie train number
+    # output = ""
+    # train_numbers.each_with_index do |train_number, index|
+    #   # skip if no stop time at either origin or destination
+    #   next if origin_times[index] !~ /:/ or destination_times[index] !~ /:/  
+    #   output += "%7s" % time_offset(origin_times[index], -@origin.time_before)
+    #   output += " "
+    #   output += "["
+    #   output += "%7s" % origin_times[index]
+    #   output += " "
+    #   output += "(%4s)" % train_number
+    #   output += " "
+    #   output += "%7s" % destination_times[index]
+    #   output += "]"
+    #   output += " "
+    #   output += "%7s" % time_offset(destination_times[index], +@destination.time_after)
+    #   output += " "
+    #   output += next_arrival[train_number]
+    #   output += "\n"
+    # end 
+    # output += "\n"
+  end
+
+  def schedule_text
+    array = schedule_data
+    # traverse each column, ie train number
+    output = ""
+    array.each_with_index do |hash, index|
+      # skip if no stop time at either origin or destination
+      output += "%7s" % hash[:time_before]
       output += " "
       output += "["
-      output += "%7s" % origin_times[index]
+      output += "%7s" % hash[:time_origin]
       output += " "
-      output += "(%4s)" % train_number
+      output += "(%4s)" % hash[:train_number]
       output += " "
-      output += "%7s" % destination_times[index]
+      output += "%7s" % hash[:time_destination]
       output += "]"
       output += " "
-      output += "%7s" % time_offset(destination_times[index], +@destination.time_after)
+      output += "%7s" % hash[:time_after]
       output += " "
-      output += next_arrival[train_number]
+      output += hash[:next_arrival]
       output += "\n"
     end 
     output += "\n"
   end
+
 end
 
 if $0 == __FILE__
@@ -134,16 +177,11 @@ if $0 == __FILE__
 
   r2 = SeptaR2.new claymont, thirtieth
   puts "#{claymont.name} >> #{thirtieth.name}\n\n"
-  #puts "Next to Arrive\n\n"
-  #puts r2.next
-  #puts "Weekday Schedule\n\n"
-  puts r2.schedule
+  puts r2.schedule_text
   r2.flip!
   puts "#{thirtieth.name} >> #{claymont.name}\n\n"
-  #puts "Next to Arrive\n\n"
-  #puts r2.next
-  #puts "Weekday Schedule\n\n"
-  puts r2.schedule
+  puts r2.schedule_text
 
   puts r2.station_list.reverse.map{|s| "+ #{s}"}
+
 end
