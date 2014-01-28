@@ -76,7 +76,7 @@ class SeptaR2
     end 
 
     # traverse each column, ie train number
-    array = []
+    data_array = []
     train_numbers.each_with_index do |train_number, index|
       # skip if no stop time at either origin or destination
       next if origin_times[index] !~ /:/ or destination_times[index] !~ /:/  
@@ -87,62 +87,15 @@ class SeptaR2
       hash[:time_destination] = destination_times[index]
       hash[:time_after] = time_offset(destination_times[index], +@destination.time_after)
       hash[:next_arrival] = next_arrival[train_number]
-      array << hash
+      data_array << hash
     end 
     
-    ap array
-    array
-
-    # # traverse each column, ie train number
-    # output = ""
-    # array.each_with_index do |hash, index|
-    #   # skip if no stop time at either origin or destination
-    #   output += "%7s" % hash[:time_before]
-    #   output += " "
-    #   output += "["
-    #   output += "%7s" % hash[:time_origin]
-    #   output += " "
-    #   output += "(%4s)" % hash[:train_number]
-    #   output += " "
-    #   output += "%7s" % hash[:time_destination]
-    #   output += "]"
-    #   output += " "
-    #   output += "%7s" % hash[:time_after]
-    #   output += " "
-    #   output += hash[:next_arrival]
-    #   output += "\n"
-    # end 
-    # output += "\n"
-
-    # # traverse each column, ie train number
-    # output = ""
-    # train_numbers.each_with_index do |train_number, index|
-    #   # skip if no stop time at either origin or destination
-    #   next if origin_times[index] !~ /:/ or destination_times[index] !~ /:/  
-    #   output += "%7s" % time_offset(origin_times[index], -@origin.time_before)
-    #   output += " "
-    #   output += "["
-    #   output += "%7s" % origin_times[index]
-    #   output += " "
-    #   output += "(%4s)" % train_number
-    #   output += " "
-    #   output += "%7s" % destination_times[index]
-    #   output += "]"
-    #   output += " "
-    #   output += "%7s" % time_offset(destination_times[index], +@destination.time_after)
-    #   output += " "
-    #   output += next_arrival[train_number]
-    #   output += "\n"
-    # end 
-    # output += "\n"
+    data_array
   end
 
   def schedule_text
-    array = schedule_data
-    # traverse each column, ie train number
     output = ""
-    array.each_with_index do |hash, index|
-      # skip if no stop time at either origin or destination
+    schedule_data.each_with_index do |hash, index|
       output += "%7s" % hash[:time_before]
       output += " "
       output += "["
@@ -178,10 +131,14 @@ if $0 == __FILE__
   r2 = SeptaR2.new claymont, thirtieth
   puts "#{claymont.name} >> #{thirtieth.name}\n\n"
   puts r2.schedule_text
+  ap r2.schedule_data
+
   r2.flip!
   puts "#{thirtieth.name} >> #{claymont.name}\n\n"
   puts r2.schedule_text
+  ap r2.schedule_data
 
   puts r2.station_list.reverse.map{|s| "+ #{s}"}
+  ap r2.station_list
 
 end
