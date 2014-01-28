@@ -26,17 +26,11 @@ class SeptaR2Server < Sinatra::Base
     r2 = SeptaR2.new @orig, @dest
 
     @output  = "#{@orig.name} >> #{@dest.name}\n\n"
-    #@output += "Next to Arrive\n\n"
-    #@output += r2.next
-    #@output += "Weekday Schedule\n\n"
-    @output += r2.schedule
+    @output += r2.schedule_text
 
     r2.flip!
     @output += "#{@orig.name} >> #{@dest.name}\n\n"
-    #@output += "Next to Arrive\n\n"
-    #@output += r2.next
-    #@output += "Weekday Schedule\n\n"
-    @output += r2.schedule
+    @output += r2.schedule_text
 
     @output += "Stations\n\n"
     SeptaR2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
@@ -61,10 +55,7 @@ class SeptaR2Server < Sinatra::Base
 
     @title   = "#{@orig.name}"
     @output  = "#{@orig.name} >> #{@dest.name}\n\n"
-    #@output += "Next to Arrive\n\n"
-    #@output += r2.next
-    #@output += "Weekday Schedule\n\n"
-    @output += r2.schedule
+    @output += r2.schedule_text
 
     haml :index
   end
@@ -84,10 +75,7 @@ class SeptaR2Server < Sinatra::Base
 
     @title   = "#{@orig.name}"
     @output  = "#{@orig.name} >> #{@dest.name}\n\n"
-    #@output += "Next to Arrive\n\n"
-    #@output += r2.next
-    #@output += "Weekday Schedule\n\n"
-    @output += r2.schedule
+    @output += r2.schedule_text
 
     haml :index
   end
