@@ -16,6 +16,10 @@ class SeptaR2Server < Sinatra::Base
     redirect "/claymont"
   end
 
+  get '/R2_Newark.gif' do
+    send_file("#{settings.root}/R2_Newark.gif")
+  end
+
   get '/route/:orig_name/:orig_tminus/:orig_tplus/:dest_name/:dest_tminus/:dest_tplus/:format' do
     @orig = Station.new
     @orig.name = URI::decode(params[:orig_name])
@@ -31,7 +35,7 @@ class SeptaR2Server < Sinatra::Base
     return JSON.pretty_generate(r2.schedule_data) if params[:format] == 'json'
 
     @title   = "#{@orig.name}"
-    @output  = "#{@orig.name} >> #{@dest.name}\n\n"
+    @output  = "#{@orig.name} >> #{@dest.name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
     @output += r2.schedule_text
 
     haml :index
@@ -52,7 +56,7 @@ class SeptaR2Server < Sinatra::Base
     return JSON.pretty_generate(r2.schedule_data) if ext == ".json"
 
     @title   = "#{@orig.name}"
-    @output  = "#{@orig.name} >> #{@dest.name}\n\n"
+    @output  = "#{@orig.name} >> #{@dest.name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
     @output += r2.schedule_text
 
     haml :index
@@ -73,7 +77,7 @@ class SeptaR2Server < Sinatra::Base
     return JSON.pretty_generate(r2.schedule_data) if ext == ".json"
 
     @title   = "#{@orig.name}"
-    @output  = "#{@orig.name} >> #{@dest.name}\n\n"
+    @output  = "#{@orig.name} >> #{@dest.name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
     @output += r2.schedule_text
 
     haml :index
@@ -83,7 +87,7 @@ class SeptaR2Server < Sinatra::Base
     return JSON.pretty_generate SeptaR2.station_list if ext == '.json' 
 
     @title = "Stations"
-    @output = "#{@title}\n\n"
+    @output = ""
     SeptaR2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
       @output += station
     end
@@ -102,9 +106,9 @@ __END__
     %title #{@title}
     <meta http-equiv="refresh" content="60">
   %body
+    %img{:src=>'/R2_Newark.gif'}
     %p
       %tt
-        = Time.now.strftime("%l:%M:%S")
         %a{href: "/claymont"}Claymont
         |
         %a{href: "/30th"}30th Street Station
