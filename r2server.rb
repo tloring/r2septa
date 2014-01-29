@@ -6,6 +6,8 @@ require 'json'
 require 'awesome_print'
 require './r2'
 
+ENV['TZ']='America/New_York'
+
 class SeptaR2Server < Sinatra::Base
 
   configure do
