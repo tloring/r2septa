@@ -22,6 +22,21 @@ class SeptaR2Server < Sinatra::Base
     send_file("#{settings.root}/R2_Newark.gif")
   end
 
+  post '/' do 
+    @orig = Station.new
+    @orig.name = URI::decode(params['orig_name'])
+    @orig.time_before = params['orig_tminus'].to_i
+    @orig.time_after = params['orig_tplus'].to_i
+
+    @dest = Station.new
+    @dest.name = URI::decode(params['dest_name'])
+    @dest.time_before = params['dest_tminus'].to_i
+    @dest.time_after = params['dest_tplus'].to_i
+
+    r2 = SeptaR2.new @orig, @dest
+    return JSON.pretty_generate(r2.schedule_data)
+  end
+
   get '/route/:orig_name/:orig_tminus/:orig_tplus/:dest_name/:dest_tminus/:dest_tplus/:format' do
     @orig = Station.new
     @orig.name = URI::decode(params[:orig_name])
@@ -83,6 +98,10 @@ class SeptaR2Server < Sinatra::Base
     @output += r2.schedule_text
 
     haml :index
+  end
+
+  post '/stations' do
+    return JSON.pretty_generate SeptaR2.station_list 
   end
 
   get '/stations*' do |ext|
