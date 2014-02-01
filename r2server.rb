@@ -12,6 +12,9 @@ class SeptaR2Server < Sinatra::Base
 
   configure do
     enable :inline_templates
+  end
+
+  before do
     content_type 'application/json'
   end
 
