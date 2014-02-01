@@ -33,6 +33,8 @@ class SeptaR2Server < Sinatra::Base
     @dest.time_before = params['dest_tminus'].to_i
     @dest.time_after = params['dest_tplus'].to_i
 
+    header("content-type: application/json")
+
     r2 = SeptaR2.new @orig, @dest
     return JSON.pretty_generate(r2.schedule_data)
   end
