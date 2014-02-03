@@ -15,7 +15,7 @@ class SeptaR2Server < Sinatra::Base
   end
 
   before do
-    content_type 'application/json'
+    #content_type 'application/json'
   end
 
   get '/' do
