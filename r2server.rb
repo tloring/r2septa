@@ -19,7 +19,7 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/' do
-    redirect (Time.now.strftime("%P") == "pm") ? "/claymont" : "/30th"
+    redirect (Time.now.strftime("%P") == "am") ? "/claymont" : "/30th"
   end
 
   get '/R2_Newark.gif' do
@@ -131,7 +131,8 @@ __END__
     %title #{@title}
     <meta http-equiv="refresh" content="60">
   %body
-    %img{:src=>'/R2_Newark.gif'}
+    %a{:href=>'/'}
+      %img{:src=>'/R2_Newark.gif', :border=>0}
     %p
       %tt
         %a{href: "/claymont"}Claymont
