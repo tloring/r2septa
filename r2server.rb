@@ -19,11 +19,7 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/' do
-    if Time.now.strftime("%P") == "am"
-      redirect "/claymont"
-    else
-      redirect "/30th"
-    end
+    redirect (Time.now.strftime("%P") == "pm") ? "/claymont" : "/30th"
   end
 
   get '/R2_Newark.gif' do
