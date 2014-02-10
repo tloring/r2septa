@@ -9,6 +9,8 @@ require './r2'
 ENV['TZ']='America/New_York'
 
 class SeptaR2Server < Sinatra::Base
+  
+  # Configuration
 
   configure do
     enable :inline_templates
@@ -18,91 +20,13 @@ class SeptaR2Server < Sinatra::Base
     content_type 'application/json' if request.request_method == "POST"
   end
 
-  get '/' do
-    redirect (Time.now.strftime("%P") == "am") ? "/claymont" : "/30th"
-  end
+  # Logo 
 
   get '/R2_Newark.gif' do
     send_file("#{settings.root}/R2_Newark.gif")
   end
 
-  post '/' do 
-    @orig = Station.new
-    @orig.name = URI::decode(params['orig_name'])
-    @orig.time_before = params['orig_tminus'].to_i
-    @orig.time_after = params['orig_tplus'].to_i
-
-    @dest = Station.new
-    @dest.name = URI::decode(params['dest_name'])
-    @dest.time_before = params['dest_tminus'].to_i
-    @dest.time_after = params['dest_tplus'].to_i
-
-    r2 = SeptaR2.new @orig, @dest
-    return JSON.pretty_generate(r2.schedule_data)
-  end
-
-  get '/route/:orig_name/:orig_tminus/:orig_tplus/:dest_name/:dest_tminus/:dest_tplus/:format' do
-    @orig = Station.new
-    @orig.name = URI::decode(params[:orig_name])
-    @orig.time_before = params[:orig_tminus].to_i
-    @orig.time_after = params[:orig_tplus].to_i
-
-    @dest = Station.new
-    @dest.name = URI::decode(params[:dest_name])
-    @dest.time_before = params[:dest_tminus].to_i
-    @dest.time_after = params[:dest_tplus].to_i
-
-    r2 = SeptaR2.new @orig, @dest
-    return JSON.pretty_generate(r2.schedule_data) if params[:format] == 'json'
-
-    @title   = "#{@orig.name}"
-    @output  = "#{@orig.name} >> #{@dest.name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
-    @output += r2.schedule_text
-
-    haml :index
-  end
-
-  get '/claymont*' do |ext|
-    @orig = Station.new
-    @orig.name = "Claymont"
-    @orig.time_before = 20
-    @orig.time_after = 15
-
-    @dest = Station.new
-    @dest.name = "30th Street Station"
-    @dest.time_before = 15
-    @dest.time_after = 10
-
-    r2 = SeptaR2.new @orig, @dest
-    return JSON.pretty_generate(r2.schedule_data) if ext == ".json"
-
-    @title   = "#{@orig.name}"
-    @output  = "#{@orig.name} >> #{@dest.name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
-    @output += r2.schedule_text
-
-    haml :index
-  end
-
-  get '/30th*' do |ext|
-    @orig = Station.new
-    @orig.name = "30th Street Station"
-    @orig.time_before = 15
-    @orig.time_after = 10
-
-    @dest = Station.new
-    @dest.name = "Claymont"
-    @dest.time_before = 20
-    @dest.time_after = 15
-
-    r2 = SeptaR2.new @orig, @dest
-    return JSON.pretty_generate(r2.schedule_data) if ext == ".json"
-
-    @title   = "#{@orig.name}"
-    @output  = "#{@orig.name} >> #{@dest.name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
-    @output += r2.schedule_text
-
-    haml :index
-  end
+  # Station List
 
   post '/stations' do
     return JSON.pretty_generate SeptaR2.station_list 
@@ -118,6 +42,57 @@ class SeptaR2Server < Sinatra::Base
     end
 
     haml :index
+  end
+ 
+  # Schedule
+
+  get '/' do
+    redirect (Time.now.strftime("%P") == "am") ? "/claymont" : "/30th"
+  end
+
+  ['/:station.json','/:station'].each do |route|
+    get route do 
+      @claymont = Station.new
+      @claymont.name = "Claymont"
+      @claymont.time_before = 20
+      @claymont.time_after = 15
+
+      @thirtieth = Station.new
+      @thirtieth.name = "30th Street Station"
+      @thirtieth.time_before = 15
+      @thirtieth.time_after = 10
+
+      stations = [@claymont, @thirtieth]
+      stations = stations.reverse if route =~ /30th/
+      puts stations
+
+      r2 = SeptaR2.new(*stations)
+      puts r2.schedule_data
+
+      if route =~ /.json/
+        return JSON.pretty_generate(r2.schedule_data) 
+      else
+        @title   = "#{stations[0].name}"
+        @output  = "#{stations[0].name} >> #{stations[1].name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
+        @output += r2.schedule_text
+        haml :index
+      end
+    end
+  end
+
+  post '/' do 
+    @orig = Station.new
+    @orig.name = URI::decode(params['orig_name'])
+    @orig.time_before = params['orig_tminus'].to_i
+    @orig.time_after = params['orig_tplus'].to_i
+
+    @dest = Station.new
+    @dest.name = URI::decode(params['dest_name'])
+    @dest.time_before = params['dest_tminus'].to_i
+    @dest.time_after = params['dest_tplus'].to_i
+
+    r2 = SeptaR2.new @orig, @dest
+    return JSON.pretty_generate(r2.schedule_data)
   end
 
 end
