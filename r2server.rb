@@ -33,15 +33,16 @@ class SeptaR2Server < Sinatra::Base
   end
 
   get '/stations*' do |ext|
-    return JSON.pretty_generate SeptaR2.station_list if ext == '.json' 
-
-    @title = "Stations"
-    @output = ""
-    SeptaR2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
-      @output += station
+    if ext == '.json' 
+      return JSON.pretty_generate SeptaR2.station_list 
+    else
+      @title = "Stations"
+      @output = ""
+      SeptaR2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
+        @output += station
+      end
+      haml :index
     end
-
-    haml :index
   end
  
   # Schedule
