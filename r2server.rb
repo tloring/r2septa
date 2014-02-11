@@ -112,6 +112,7 @@ __END__
   %head
     %title #{@title}
     <meta http-equiv="refresh" content="60">
+    <meta content="width=device-width, maximum-scale=1.0, initial-scale=0.5, user-scalable=yes" name="viewport">
   %body
     %a{:href=>'/'}
       %img{:src=>'/R2_Newark.gif', :border=>0}
@@ -139,7 +140,7 @@ __END__
 
 %p{:style=>"font-family:monospace"}= @header
 
-%table{:style=>"font-family:monospace"}
+%table{:style=>"font-family:monospace; width:100%"}
   - next_arrival = 0
   - @data.each_with_index do |train, index|
     - next_arrival += 1 if not train[:next_arrival].empty?
@@ -151,4 +152,4 @@ __END__
       %td{:align=>"right"}= "&nbsp;[" + train[:train_number] + "]&nbsp;"
       %td{:align=>"right"}= "&nbsp;" + train[:time_destination] + "&nbsp;"
       %td{:style=>"font-style:italic"}= "&nbsp;" + train[:time_after] + "&nbsp;"
-      %td{:align=>"left"}= "&nbsp;" + train[:next_arrival] + "&nbsp;"
+      %td{:style=>"width:100px", :align=>"left"}= "&nbsp;" + train[:next_arrival] + "&nbsp;"
