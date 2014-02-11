@@ -14,6 +14,18 @@ class SeptaR2Server < Sinatra::Base
 
   configure do
     enable :inline_templates
+
+    $claymont = Station.new
+    $claymont.name = "Claymont"
+    $claymont.time_before = 20
+    $claymont.time_after = 15
+
+    $thirtieth = Station.new
+    $thirtieth.name = "30th Street Station"
+    $thirtieth.time_before = 15
+    $thirtieth.time_after = 10
+
+    $stations = [$claymont, $thirtieth]
   end
 
   before do
@@ -28,10 +40,6 @@ class SeptaR2Server < Sinatra::Base
 
   # Station List
 
-  post '/stations' do
-    return JSON.pretty_generate SeptaR2.station_list 
-  end
-
   get '/stations*' do |ext|
     if ext == '.json' 
       return JSON.pretty_generate SeptaR2.station_list 
@@ -44,40 +52,37 @@ class SeptaR2Server < Sinatra::Base
       haml :index
     end
   end
- 
-  # Schedule
 
-  get '/' do
-    redirect (Time.now.strftime("%P") == "am") ? "/claymont" : "/30th"
+  post '/stations' do
+    return JSON.pretty_generate SeptaR2.station_list 
   end
 
-  ['/:station.json','/:station'].each do |route|
-    get route do 
-      @claymont = Station.new
-      @claymont.name = "Claymont"
-      @claymont.time_before = 20
-      @claymont.time_after = 15
+  # Schedule
 
-      @thirtieth = Station.new
-      @thirtieth.name = "30th Street Station"
-      @thirtieth.time_before = 15
-      @thirtieth.time_after = 10
+  get '/:station?' do |station|
+    if params['station'] =~ /json/
+      params['station'] = nil
+      ext = "json" 
+    end
 
-      stations = [@claymont, @thirtieth]
-      stations = stations.reverse if route =~ /30th/
-      puts stations
+    stations = $stations
+    if params['station'].nil? 
+      stations = $stations.reverse if Time.now.strftime("%P") == "pm" 
+    else
+      station, ext = params['station'].split('.')
+      stations = $stations.reverse if station =~ /30th/ # need generic n/s or am/pm departure
+    end
+  
+    r2 = SeptaR2.new(*stations)
+    puts r2.schedule_data
 
-      r2 = SeptaR2.new(*stations)
-      puts r2.schedule_data
-
-      if route =~ /.json/
-        return JSON.pretty_generate(r2.schedule_data) 
-      else
-        @title   = "#{stations[0].name}"
-        @output  = "#{stations[0].name} >> #{stations[1].name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
-        @output += r2.schedule_text
-        haml :index
-      end
+    if ext =~ /json/
+      return JSON.pretty_generate(r2.schedule_data) 
+    else
+      @title   = "#{stations[0].name}"
+      @output  = "#{stations[0].name} >> #{stations[1].name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
+      @output += r2.schedule_text
+      haml :index
     end
   end
 
