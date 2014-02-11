@@ -140,8 +140,12 @@ __END__
 %p{:style=>"font-family:monospace"}= @header
 
 %table{:style=>"font-family:monospace"}
+  - next_arrival = 0
   - @data.each_with_index do |train, index|
-    %tr{:style=>"background-color:#{index.even? ? '#eee' : '#fff'}"}
+    - next_arrival += 1 if not train[:next_arrival].empty?
+    - row_color = index.even? ? '#eee' : '#fff'
+    - row_color = "#FFFFAA" if next_arrival == 1
+    %tr{:style=>"background-color:#{row_color}"}
       %td{:align=>"right", :style=>"font-style:italic"}= "&nbsp;" + train[:time_before] + "&nbsp;"
       %td{:align=>"right", :style=>"font-weight:bold"}= "&nbsp;" + train[:time_origin] + "&nbsp;"
       %td{:align=>"right"}= "&nbsp;[" + train[:train_number] + "]&nbsp;"
