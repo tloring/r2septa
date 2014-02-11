@@ -49,7 +49,8 @@ class SeptaR2Server < Sinatra::Base
       SeptaR2.station_list.reverse.map{|s| "+ #{s}\n"}.each do |station|
         @output += station
       end
-      haml :index
+      @data = SeptaR2.station_list.reverse
+      haml :stations
     end
   end
 
@@ -74,7 +75,6 @@ class SeptaR2Server < Sinatra::Base
     end
   
     r2 = SeptaR2.new(*stations)
-    puts r2.schedule_data
 
     if ext =~ /json/
       return JSON.pretty_generate(r2.schedule_data) 
@@ -82,7 +82,8 @@ class SeptaR2Server < Sinatra::Base
       @title   = "#{stations[0].name}"
       @output  = "#{stations[0].name} >> #{stations[1].name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
       @output += r2.schedule_text
-      haml :index
+      @data = r2.schedule_data
+      haml :trains
     end
   end
 
@@ -128,3 +129,20 @@ __END__
 
 %pre= @output
 
+@@ stations
+
+%ul{:style=>"font-family:monospace"}
+  - @data.each do |station|
+    %li= station
+
+@@ trains
+
+%table{:style=>"font-family:monospace"}
+  - @data.each_with_index do |train, index|
+    %tr{:style=>"background-color:#{index % 2 ? '#eee' : '#fff'}"}
+      %td{:align=>"right", :style=>"font-style:italic"}= train[:time_before]
+      %td{:align=>"right", :style=>"font-weight:bold"}= train[:time_origin]
+      %td{:align=>"right"}= "[" + train[:train_number] + "]"
+      %td{:align=>"right"}= train[:time_destination]
+      %td{:style=>"font-style:italic"}= train[:time_after]
+      %td{:align=>"left"}= train[:next_arrival]
