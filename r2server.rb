@@ -139,10 +139,10 @@ __END__
 
 %table{:style=>"font-family:monospace"}
   - @data.each_with_index do |train, index|
-    %tr{:style=>"background-color:#{index % 2 ? '#eee' : '#fff'}"}
-      %td{:align=>"right", :style=>"font-style:italic"}= train[:time_before]
-      %td{:align=>"right", :style=>"font-weight:bold"}= train[:time_origin]
-      %td{:align=>"right"}= "[" + train[:train_number] + "]"
-      %td{:align=>"right"}= train[:time_destination]
-      %td{:style=>"font-style:italic"}= train[:time_after]
-      %td{:align=>"left"}= train[:next_arrival]
+    %tr{:style=>"background-color:#{index.even? ? '#eee' : '#fff'}"}
+      %td{:align=>"right", :style=>"font-style:italic"}= " " + train[:time_before] + " "
+      %td{:align=>"right", :style=>"font-weight:bold"}= " " + train[:time_origin] + " "
+      %td{:align=>"right"}= " [" + train[:train_number] + "] "
+      %td{:align=>"right"}= " " + train[:time_destination] + " "
+      %td{:style=>"font-style:italic"}= " " + train[:time_after] + " "
+      %td{:align=>"left"}= " " + train[:next_arrival] + " "
