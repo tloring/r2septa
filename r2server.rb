@@ -80,8 +80,8 @@ class SeptaR2Server < Sinatra::Base
       return JSON.pretty_generate(r2.schedule_data) 
     else
       @title   = "#{stations[0].name}"
-      @output  = "#{stations[0].name} >> #{stations[1].name} [#{Time.now.strftime("%l:%M:%S")}]\n\n"
-      @output += r2.schedule_text
+      @header  = "#{stations[0].name} >> #{stations[1].name} [#{Time.now.strftime("%l:%M:%S")}]"
+      #@output += r2.schedule_text
       @data = r2.schedule_data
       haml :trains
     end
@@ -136,6 +136,8 @@ __END__
     %li= station
 
 @@ trains
+
+%p{:style=>"font-family:monospace"}= @header
 
 %table{:style=>"font-family:monospace"}
   - @data.each_with_index do |train, index|
