@@ -151,5 +151,5 @@ __END__
       %td{:align=>"right", :style=>"font-weight:bold"}= "&nbsp;" + train[:time_origin] + "&nbsp;"
       %td{:align=>"right"}= "&nbsp;[" + train[:train_number] + "]&nbsp;"
       %td{:align=>"right"}= "&nbsp;" + train[:time_destination] + "&nbsp;"
-      %td{:style=>"font-style:italic"}= "&nbsp;" + train[:time_after] + "&nbsp;"
-      %td{:style=>"width:100px", :align=>"left"}= "&nbsp;" + train[:next_arrival] + "&nbsp;"
+      %td{:align=>"right", :style=>"font-style:italic"}= "&nbsp;" + train[:time_after] + "&nbsp;"
+      %td{:align=>"left", :style=>"width:100px"}= "&nbsp;" + train[:next_arrival] + "&nbsp;"
