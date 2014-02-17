@@ -52,6 +52,30 @@ class SeptaR2
     (Time.parse(time_str)+(minutes*60)).strftime("%I:%M%P")
   end
 
+  def relative_time(start_time_str)                                                                            
+    start_time = Time.parse(start_time_str)
+    diff_seconds = start_time - Time.now 
+
+    puts
+    puts "start_time_str: #{start_time_str}"
+    puts "start_time: #{start_time}"
+    puts "time.noew: #{Time.now}"
+    puts "diff_mins: #{diff_seconds/60}"
+
+    case diff_seconds
+      when 0 .. 59                                                                                         
+        "#{diff_seconds} seconds from now"                                                            
+      when 60 .. (3600-1)                                                                                  
+        "#{diff_seconds/60} minutes from now"                                                         
+      when 3600 .. (3600*24-1)                                                                             
+        "#{diff_seconds/3600} hours from now"                                                         
+      when (3600*24) .. (3600*24*30)                                                                       
+        "#{diff_seconds/(3600*24)} days from now"                                                     
+      else                                                                                                 
+        start_time.strftime("%m/%d/%Y")                                                               
+    end                                                                                                    
+  end                   
+
   def schedule_data
     url = "http://www3.septa.org/hackathon/NextToArrive/#{@origin.name}/#{@destination.name}/20"
     response = JSON.parse open(URI::encode(url)).read
@@ -83,6 +107,7 @@ class SeptaR2
       hash = {}
       hash[:train_number] = train_number
       hash[:time_before] = time_offset(origin_times[index], -@origin.time_before)
+      hash[:time_before_relative] = relative_time(hash[:time_before])
       hash[:time_origin] = origin_times[index]
       hash[:time_destination] = destination_times[index]
       hash[:time_after] = time_offset(destination_times[index], +@destination.time_after)
@@ -91,6 +116,9 @@ class SeptaR2
     end 
     
     data_array
+  end
+  
+  def schedule_json
   end
 
   def schedule_text

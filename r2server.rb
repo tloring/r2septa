@@ -28,6 +28,24 @@ class SeptaR2Server < Sinatra::Base
     $stations = [$claymont, $thirtieth]
   end
 
+  helpers do 
+    def relative_time(start_time)
+      diff_seconds = start_time - Time.now 
+      case diff_seconds
+        when 0 .. 59
+          puts "#{diff_seconds} seconds from now"
+        when 60 .. (3600-1)
+          puts "#{diff_seconds/60} minutes from now"
+        when 3600 .. (3600*24-1)
+          puts "#{diff_seconds/3600} hours from now"
+        when (3600*24) .. (3600*24*30) 
+          puts "#{diff_seconds/(3600*24)} days from now"
+        else
+          puts start_time.strftime("%m/%d/%Y")
+      end
+    end
+  end
+
   before do
     content_type 'application/json' if request.request_method == "POST"
   end
@@ -114,17 +132,20 @@ __END__
     <meta http-equiv="refresh" content="60">
     <meta content="width=device-width, maximum-scale=1.0, initial-scale=0.5, user-scalable=yes" name="viewport">
   %body
-    %a{:href=>'/'}
-      %img{:src=>'/R2_Newark.gif', :border=>0}
-    %p
-      %tt
-        %a{href: "/claymont"}Claymont
-        |
-        %a{href: "/30th"}30th Street Station
-        |
-        %a{href: "/stations"}Stations
+    %center
+      %div{style: 'width:640px'}
 
-    = yield
+        %a{:href=>'/'}
+          %img{:src=>'/R2_Newark.gif', :border=>0}
+        %p
+          %tt
+            %a{href: "/claymont"}Claymont
+            |
+            %a{href: "/30th"}30th Street Station
+            |
+            %a{href: "/stations"}Stations
+
+        = yield
 
 @@ index
 
@@ -132,9 +153,10 @@ __END__
 
 @@ stations
 
-%ul{:style=>"font-family:monospace"}
-  - @data.each do |station|
-    %li= station
+%div{style: "width:200px; text-align:left"}
+  %ul{:style=>"font-family:monospace"}
+    - @data.each do |station|
+      %li= station
 
 @@ trains
 
