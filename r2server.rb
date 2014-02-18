@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'sinatra/base'
+
 require 'haml'
 require 'json'
 require 'awesome_print'
@@ -122,6 +123,8 @@ class SeptaR2Server < Sinatra::Base
 
 end
 
+# <meta content="width=device-width, maximum-scale=1.0, initial-scale=0.5, user-scalable=yes" name="viewport">
+
 __END__
 
 @@ layout
@@ -130,7 +133,7 @@ __END__
   %head
     %title #{@title}
     <meta http-equiv="refresh" content="60">
-    <meta content="width=device-width, maximum-scale=1.0, initial-scale=0.5, user-scalable=yes" name="viewport">
+    <meta name="viewport" content="initial-scale=1, user-scalable=yes">
   %body
     %center
       %div{style: 'width:640px'}
@@ -165,7 +168,7 @@ __END__
 %table{:style=>"font-family:monospace; width:100%"}
   - next_arrival = 0
   - @data.each_with_index do |train, index|
-    - next_arrival += 1 if not train[:next_arrival].empty?
+    - next_arrival += 1 if train[:next_arrival] and not train[:next_arrival].empty?
     - row_color = index.even? ? '#eee' : '#fff'
     - row_color = "#FFFFAA" if next_arrival == 1
     %tr{:style=>"background-color:#{row_color}"}
@@ -174,4 +177,4 @@ __END__
       %td{:align=>"right"}= "&nbsp;[" + train[:train_number] + "]&nbsp;"
       %td{:align=>"right"}= "&nbsp;" + train[:time_destination] + "&nbsp;"
       %td{:align=>"right", :style=>"font-style:italic"}= "&nbsp;" + train[:time_after] + "&nbsp;"
-      %td{:align=>"left", :style=>"width:100px"}= "&nbsp;" + train[:next_arrival] + "&nbsp;"
+      %td{:align=>"left", :style=>"width:100px"}= "&nbsp;" + (train[:next_arrival] ? train[:next_arrival] : "n/a") + "&nbsp;"

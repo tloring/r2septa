@@ -24,6 +24,7 @@ class SeptaR2
   def self.station_list
     # northbound order
     url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_1.html"
+    puts url
     doc = Nokogiri::HTML(open(url))                                                                            
                                                                                                                
     station_array = []                                                                                         
@@ -77,19 +78,24 @@ class SeptaR2
   end                   
 
   def schedule_data
+    next_arrival = nil
+    # move this out, so if time out, no need  
     url = "http://www3.septa.org/hackathon/NextToArrive/#{@origin.name}/#{@destination.name}/20"
+    puts url
     response = JSON.parse open(URI::encode(url)).read
     next_arrival = Hash.new("")
     response.each do |train_rec|
       next_arrival[train_rec['orig_train']] = train_rec['orig_delay']
     end
 
+    # can cache this info
     direction_code = direction == :northbound ? 1 : 0
     origin_index = stations(direction).index(@origin.name) + 1
     destination_index = stations(direction).index(@destination.name) + 1
     train_numbers = origin_times = destination_times = nil 
 
     url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_#{direction_code}.html"
+    puts url
     doc = Nokogiri::HTML(open(url))
 
     # there are 2 tables with ID of timeTable, so re-parse 2nd table and work on those rows
@@ -111,7 +117,7 @@ class SeptaR2
       hash[:time_origin] = origin_times[index]
       hash[:time_destination] = destination_times[index]
       hash[:time_after] = time_offset(destination_times[index], +@destination.time_after)
-      hash[:next_arrival] = next_arrival[train_number]
+      hash[:next_arrival] = next_arrival[train_number] if next_arrival
       data_array << hash
     end 
     
