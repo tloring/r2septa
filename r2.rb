@@ -16,12 +16,12 @@ class SeptaR2
   attr_reader :station_list
 
   def initialize(origin, destination)
-    @station_list = SeptaR2.get_station_list
+    @station_list = SeptaR2.station_list
     @origin = origin
     @destination = destination
   end
 
-  def self.get_station_list
+  def self.station_list
     # northbound order
     url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_1.html"
     puts "station_list #{url}"
