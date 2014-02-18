@@ -16,15 +16,15 @@ class SeptaR2
   attr_reader :station_list
 
   def initialize(origin, destination)
-    @station_list = SeptaR2.station_list
+    @station_list = SeptaR2.get_station_list
     @origin = origin
     @destination = destination
   end
 
-  def self.station_list
+  def self.get_station_list
     # northbound order
     url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_1.html"
-    puts url
+    puts "station_list #{url}"
     doc = Nokogiri::HTML(open(url))                                                                            
                                                                                                                
     station_array = []                                                                                         
@@ -60,7 +60,7 @@ class SeptaR2
     puts
     puts "start_time_str: #{start_time_str}"
     puts "start_time: #{start_time}"
-    puts "time.noew: #{Time.now}"
+    puts "time.now: #{Time.now}"
     puts "diff_mins: #{diff_seconds/60}"
 
     case diff_seconds
@@ -81,7 +81,7 @@ class SeptaR2
     next_arrival = nil
     # move this out, so if time out, no need  
     url = "http://www3.septa.org/hackathon/NextToArrive/#{@origin.name}/#{@destination.name}/20"
-    puts url
+    puts "next_to_arrive #{url}"
     response = JSON.parse open(URI::encode(url)).read
     next_arrival = Hash.new("")
     response.each do |train_rec|
@@ -95,7 +95,7 @@ class SeptaR2
     train_numbers = origin_times = destination_times = nil 
 
     url = "http://www.septa.org/schedules/rail/w/#{ROUTE_CODE}_#{direction_code}.html"
-    puts url
+    puts "schedule_data #{url}"
     doc = Nokogiri::HTML(open(url))
 
     # there are 2 tables with ID of timeTable, so re-parse 2nd table and work on those rows
