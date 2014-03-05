@@ -37,6 +37,31 @@ class SeptaR2
     station_array
   end
 
+  def self.station_data
+    [ { name:"Newark",                        lat:39.670278, long:-75.753056},
+      { name:"Churchman's Crossing",          lat:39.6940,   long:-75.6724},
+      { name:"Wilmington",                    lat:39.736667, long:-75.551667},
+      { name:"Claymont",                      lat:39.7976,   long:-75.4521},
+      { name:"Marcus Hook",                   lat:39.8215,   long:-75.4197},
+      { name:"Highland Avenue",               lat:39.8337,   long:-75.3929},
+      { name:"Chester Transportation Center", lat:39.84932,  long:-75.35988},
+      { name:"Eddystone",                     lat:39.8573,   long:-75.3416},
+      { name:"Crum Lynne",                    lat:39.8719,   long:-75.3311},
+      { name:"Ridley Park",                   lat:39.880523, long:-75.322105},
+      { name:"Prospect Park",                 lat:39.888114, long:-75.309434},
+      { name:"Norwood",                       lat:39.891360, long:-75.302221},
+      { name:"Glenolden",                     lat:39.896362, long:-75.289854},
+      { name:"Folcroft",                      lat:39.900667, long:-75.279543},
+      { name:"Sharon Hill",                   lat:39.904255, long:-75.270971},
+      { name:"Curtis Park",                   lat:39.908083, long:-75.265008},
+      { name:"Darby",                         lat:39.912962, long:-75.254588},
+      { name:"University City",               lat:39.94784,  long:-75.19034},
+      { name:"30th Street Station",           lat:39.956924, long:-75.182576},
+      { name:"Suburban Station",              lat:39.954167, long:-75.167},
+      { name:"Market East",                   lat:39.952076, long:-75.156612},
+      { name:"Temple University",             lat:39.9816,   long:-75.1495} ]
+  end
+
   def direction
     @station_list.index(@origin.name) < @station_list.index(@destination.name) ? :northbound : :southbound
   end
@@ -175,4 +200,5 @@ if $0 == __FILE__
   puts r2.station_list.reverse.map{|s| "+ #{s}"}
   ap r2.station_list
 
+  ap SeptaR2.station_data
 end

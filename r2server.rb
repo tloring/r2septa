@@ -174,7 +174,7 @@ __END__
     %tr{:style=>"background-color:#{row_color}"}
       %td{:align=>"right", :style=>"font-style:italic"}= "&nbsp;" + train[:time_before] + "&nbsp;"
       %td{:align=>"right", :style=>"font-weight:bold"}= "&nbsp;" + train[:time_origin] + "&nbsp;"
+      %td{:align=>"left", :style=>"width:100px"}= "&nbsp;" + (train[:next_arrival] ? train[:next_arrival] : "n/a") + "&nbsp;"
       %td{:align=>"right"}= "&nbsp;[" + train[:train_number] + "]&nbsp;"
       %td{:align=>"right"}= "&nbsp;" + train[:time_destination] + "&nbsp;"
       %td{:align=>"right", :style=>"font-style:italic"}= "&nbsp;" + train[:time_after] + "&nbsp;"
-      %td{:align=>"left", :style=>"width:100px"}= "&nbsp;" + (train[:next_arrival] ? train[:next_arrival] : "n/a") + "&nbsp;"
